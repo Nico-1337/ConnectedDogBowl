@@ -1,0 +1,47 @@
+esphome:
+  name: dog_bowl
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: "your_ssid"
+  password: "your_ssid_password"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Dog bowl Fallback Hotspot"
+    password: "0123456789"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: "your_HA_API_password"
+
+ota:
+  password: "your_password"
+
+sensor:
+  - platform: hx711
+    filters:
+      - filter_out: nan
+      - calibrate_linear:
+        - 164800 -> 0
+        - 555000 -> 1
+        - 943700 -> 2
+      - lambda: |-
+          if (x >= 0) {
+            return x;
+          } else {
+            return 0;
+          }
+    unit_of_measurement: litres
+    accuracy_decimals: 2
+    name: "dog bowl"
+    dout_pin: D0
+    clk_pin: D1
+    gain: 128
+    update_interval: 10s
