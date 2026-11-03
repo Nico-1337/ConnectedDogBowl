@@ -1,52 +1,53 @@
 # AGENTS.md — ConnectedDogBowl
 
-## But
+## Purpose
 
-Gamelle qui se pèse : cellule de charge + HX711 lus par un NodeMCU (ESP8266) sous ESPHome, mesure envoyée en
-litres à Home Assistant par l'API native. Projet de 2020-2021, un seul fichier de configuration, pas de code compilé à la main.
+A bowl that weighs itself: load cell + HX711 read by a NodeMCU (ESP8266) running ESPHome, reading sent in
+litres to Home Assistant over the native API. A 2020-2021 project, a single configuration file, no hand-compiled code.
 
-## Fichiers
+## Files
 
-| Chemin | Rôle |
+| Path | Role |
 |---|---|
-| `dogbowl.yaml` | configuration ESPHome complète du nœud (seul fichier « code ») |
-| `README.md` | tutoriel humain en français + résumé anglais |
-| `readmeImgSrc/` | images du README (`image5.webp` photo du montage, `image2.jpg` le chien, `image3.jpg` tableau de bord, `image4.png` câblage, `image1.jpg` / `image6.jpg` / `image7.jpg` photos de composants des vendeurs) |
+| `dogbowl.yaml` | complete ESPHome configuration of the node (the only "code" file) |
+| `README.md` | human tutorial in English |
+| `README.fr.md` | the same tutorial in French |
+| `readmeImgSrc/` | README images (`image5.webp` photo of the build, `image2.jpg` the dog, `image3.jpg` dashboard, `image4.png` wiring, `image1.jpg` / `image6.jpg` / `image7.jpg` component photos from the sellers) |
 | `LICENSE` | MIT, Nicolas Holder |
 
 ## Versions
 
-- Syntaxe ESPHome de 2020-2021 : `platform: ESP8266` et `board: nodemcuv2` sous `esphome:`, `api.password`,
-  `ota.password` sans `platform`. Les versions récentes d'ESPHome attendent un bloc `esp8266:`, une clé
-  `api.encryption.key` et `ota: - platform: esphome`. Ne migrer que sur demande, en gardant le même comportement.
-- Nom du nœud `dog_bowl` (le tiret bas est déconseillé par les ESPHome récents ; le renommer change l'entité côté Home Assistant).
+- ESPHome syntax from 2020-2021: `platform: ESP8266` and `board: nodemcuv2` under `esphome:`, `api.password`,
+  `ota.password` without `platform`. Recent ESPHome versions expect an `esp8266:` block, an
+  `api.encryption.key` key and `ota: - platform: esphome`. Only migrate on request, keeping the same behavior.
+- Node name `dog_bowl` (recent ESPHome versions discourage the underscore; renaming it changes the entity on the Home Assistant side).
 
-## Structure de `dogbowl.yaml`
+## Structure of `dogbowl.yaml`
 
-- `esphome:` nom et carte (`nodemcuv2`).
-- `wifi:` réseau principal + point d'accès de secours `ap:` ; `captive_portal:` pour reconfigurer le wifi.
-- `logger:` journaux (sert à lire la valeur brute pendant l'étalonnage).
-- `api:` connexion native à Home Assistant ; `ota:` mises à jour sans fil.
-- `sensor:` une seule entrée `platform: hx711` :
-  - `dout_pin: D0`, `clk_pin: D1`, `gain: 128`, `update_interval: 10s` ;
-  - filtres dans l'ordre : `filter_out: nan` → `calibrate_linear` → `lambda` qui ramène toute valeur négative à 0 ;
+- `esphome:` name and board (`nodemcuv2`).
+- `wifi:` main network + fallback hotspot `ap:`; `captive_portal:` to reconfigure Wi-Fi.
+- `logger:` logs (used to read the raw value during calibration).
+- `api:` native connection to Home Assistant; `ota:` over-the-air updates.
+- `sensor:` a single `platform: hx711` entry:
+  - `dout_pin: D0`, `clk_pin: D1`, `gain: 128`, `update_interval: 10s`;
+  - filters in order: `filter_out: nan` → `calibrate_linear` → `lambda` that clamps any negative value to 0;
   - `unit_of_measurement: litres`, `accuracy_decimals: 2`, `name: "dog bowl"`.
 
-## Champs à remplacer avant de flasher
+## Fields to replace before flashing
 
-| Champ | Valeur dans le dépôt | À mettre |
+| Field | Value in the repository | Set to |
 |---|---|---|
-| `wifi.ssid` | `your_ssid` | nom du réseau |
-| `wifi.password` | `your_ssid_password` | mot de passe wifi |
-| `wifi.ap.password` | `change_me_fallback` | mot de passe du point d'accès de secours |
-| `api.password` | `your_HA_API_password` | mot de passe API (ou clé de chiffrement en ESPHome récent) |
-| `ota.password` | `your_password` | mot de passe OTA |
-| `sensor[0].dout_pin`, `clk_pin` | `D0`, `D1` | seulement si le câblage diffère |
-| `calibrate_linear` | voir ci-dessous | points mesurés sur sa propre balance |
+| `wifi.ssid` | `your_ssid` | network name |
+| `wifi.password` | `your_ssid_password` | Wi-Fi password |
+| `wifi.ap.password` | `change_me_fallback` | fallback hotspot password |
+| `api.password` | `your_HA_API_password` | API password (or encryption key on recent ESPHome) |
+| `ota.password` | `your_password` | OTA password |
+| `sensor[0].dout_pin`, `clk_pin` | `D0`, `D1` | only if the wiring differs |
+| `calibrate_linear` | see below | points measured on your own scale |
 
-Préférer `!secret` (fichier `secrets.yaml` d'ESPHome) aux valeurs en clair.
+Prefer `!secret` (ESPHome `secrets.yaml` file) over plain values.
 
-## Étalonnage
+## Calibration
 
 ```yaml
 - calibrate_linear:
@@ -55,30 +56,29 @@ Préférer `!secret` (fichier `secrets.yaml` d'ESPHome) aux valeurs en clair.
   - 943700 -> 2
 ```
 
-Forme « valeur brute HX711 -> valeur renvoyée ». Les points du dépôt correspondent à 0, 1 et 2 litres sur la
-balance de l'auteur (environ 390 000 points bruts par litre). Ils ne sont pas transposables : relever la valeur
-brute dans les journaux avec la gamelle vide, puis avec 1 L et 2 L, et remplacer les trois lignes.
+Form "raw HX711 value -> returned value". The points in the repository correspond to 0, 1 and 2 litres on the
+author's scale (about 390,000 raw points per litre). They do not carry over: read the raw value in the logs with
+the empty bowl, then with 1 L and 2 L, and replace the three lines.
 
-## Câblage (invariant documenté)
+## Wiring (documented invariant)
 
-HX711 VCC → 3.3V, GND → GND, DAT → D0, CLK → D1. Si une broche change dans le YAML, mettre à jour le tableau
-du README et ne pas modifier `readmeImgSrc/image4.png` en silence.
+HX711 VCC → 3.3V, GND → GND, DAT → D0, CLK → D1. If a pin changes in the YAML, update the table in
+both READMEs and do not silently modify `readmeImgSrc/image4.png`.
 
-## Côté Home Assistant
+## Home Assistant side
 
-Le nœud est découvert automatiquement. Les alertes de l'auteur (seuil 0,25 L : SMS IFTTT, TTS, popup browser_mod)
-vivent dans un autre dépôt, `HomeAssistantPublicConfig`, sous `automation/notification/romeo/`, avec l'entité
-renommée `sensor.eau_romeo`.
+The node is discovered automatically. The author's alerts (0.25 L threshold: IFTTT SMS, TTS, browser_mod popup)
+are not part of this repository.
 
 ## Invariants
 
-- Un seul nœud, un seul capteur ; garder le filtre `nan` et le plancher à 0.
-- Garder le README en français avec son résumé anglais à jour (le dépôt a des lecteurs étrangers).
-- Ne rien inventer sur le matériel : les prix et le temps de montage du README sont ceux de l'auteur.
+- One node, one sensor; keep the `nan` filter and the floor at 0.
+- Keep `README.md` (English) and `README.fr.md` (French) in sync (the repository has readers abroad).
+- Do not invent anything about the hardware: the prices and build time in the README are the author's.
 
-## Ne jamais commiter
+## Never commit
 
-- Vrais SSID et mots de passe wifi, mots de passe API / OTA / point d'accès, clés de chiffrement, jetons.
-- `secrets.yaml`, dossier `.esphome/`, binaires compilés.
-- Adresses IP, coordonnées GPS, adresse, numéros de téléphone.
-- Prénoms réels (seul Nicolas est citable ; le chien s'appelle Roméo).
+- Real SSIDs and Wi-Fi passwords, API / OTA / hotspot passwords, encryption keys, tokens.
+- `secrets.yaml`, the `.esphome/` folder, compiled binaries.
+- IP addresses, GPS coordinates, street address, phone numbers.
+- Real first names (only Nicolas may be named; the dog is called Roméo).
