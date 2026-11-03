@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="1000" height="420" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <title>Calibration: raw HX711 value to litres</title>
+  <rect x="1" y="1" width="998" height="418" rx="16" fill="#ffffff" stroke="#d0d7de" stroke-width="2"/>
+  <text x="40" y="44" font-size="20" font-weight="700" fill="#1f2328">Calibration: three points, a straight line</text>
+  <text x="40" y="68" font-size="14" fill="#57606a">The three calibrate_linear points of dogbowl.yaml, measured with my cell and my bowl. Yours will differ.</text>
+  <line x1="120" y1="330" x2="960" y2="330" stroke="#eaeef2"/><text x="110" y="334" font-size="13" text-anchor="end" fill="#8c959f">0 L</text><line x1="120" y1="216" x2="960" y2="216" stroke="#eaeef2"/><text x="110" y="220" font-size="13" text-anchor="end" fill="#8c959f">1 L</text><line x1="120" y1="103" x2="960" y2="103" stroke="#eaeef2"/><text x="110" y="107" font-size="13" text-anchor="end" fill="#8c959f">2 L</text>
+  <line x1="120" y1="330" x2="960" y2="330" stroke="#8c959f" stroke-width="1.5"/>
+  <text x="213" y="352" font-size="12" text-anchor="middle" fill="#8c959f">200 000</text><text x="400" y="352" font-size="12" text-anchor="middle" fill="#8c959f">400 000</text><text x="587" y="352" font-size="12" text-anchor="middle" fill="#8c959f">600 000</text><text x="773" y="352" font-size="12" text-anchor="middle" fill="#8c959f">800 000</text><text x="960" y="352" font-size="12" text-anchor="middle" fill="#8c959f">1 000 000</text>
+  <text x="540" y="378" font-size="13" text-anchor="middle" fill="#57606a">raw value read by the HX711</text>
+  <rect x="120" y="327" width="60" height="6" fill="#cf222e" opacity="0.5"/>
+  <text x="128" y="294" font-size="12" fill="#cf222e">below: clamped to 0</text>
+  <polyline points="180.5,330.0 544.7,216.4 907.5,102.7" fill="none" stroke="#2f6fdb" stroke-width="3.5"/>
+  <circle cx="180.5" cy="330.0" r="7" fill="#2f6fdb" stroke="#ffffff" stroke-width="2"/><text x="192" y="320" font-size="14" fill="#1f2328" font-family="Consolas, Menlo, monospace">164800 -&gt; 0 (empty bowl)</text><circle cx="544.7" cy="216.4" r="7" fill="#2f6fdb" stroke="#ffffff" stroke-width="2"/><text x="557" y="206" font-size="14" fill="#1f2328" font-family="Consolas, Menlo, monospace">555000 -&gt; 1 (1 L)</text><circle cx="907.5" cy="102.7" r="7" fill="#2f6fdb" stroke="#ffffff" stroke-width="2"/><text x="895" y="93" font-size="14" text-anchor="end" fill="#1f2328" font-family="Consolas, Menlo, monospace">943700 -&gt; 2 (2 L)</text>
+  <g font-size="13" fill="#57606a"><text x="640" y="300">about 390 000 counts per litre</text></g>
+</svg>

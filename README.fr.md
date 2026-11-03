@@ -77,7 +77,9 @@ Si possible, imprimez aussi un **boîtier pour l'ESP8266**. Sinon, n'importe que
 | DAT | D0 | données |
 | CLK | D1 | horloge |
 
-<p align="center"><img src="./readmeImgSrc/image4.png" width="45%" alt="Schéma de câblage HX711 vers NodeMCU"/></p>
+![La balance vue de côté, et le câblage de la cellule au HX711 et au NodeMCU](readmeImgSrc/wiring.svg)
+
+*Schéma en anglais.*
 
 ## Installation
 
@@ -109,6 +111,8 @@ L'étalonnage se fait dans le filtre `calibrate_linear`. Chaque ligne a la forme
 Ici, `555000` est la valeur lue par le HX711 et `1` la valeur envoyée à Home Assistant (1 litre).
 Pour vos propres points : posez la gamelle vide, relevez la valeur brute dans les journaux ESPHome, puis recommencez avec 1 L et 2 L d'eau.
 Les valeurs négatives sont ramenées à 0 par le filtre `lambda`, et les lectures invalides (`nan`) sont ignorées.
+
+![Étalonnage : les trois points de dogbowl.yaml sur une droite, environ 390 000 points par litre](readmeImgSrc/calibration.svg)
 
 ## Limites
 

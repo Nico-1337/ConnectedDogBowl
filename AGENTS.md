@@ -12,7 +12,7 @@ litres to Home Assistant over the native API. A 2020-2021 project, a single conf
 | `dogbowl.yaml` | complete ESPHome configuration of the node (the only "code" file) |
 | `README.md` | human tutorial in English |
 | `README.fr.md` | the same tutorial in French |
-| `readmeImgSrc/` | README images (`image5.webp` photo of the build, `image2.jpg` the dog, `image3.jpg` dashboard, `image4.png` wiring, `image1.jpg` / `image6.jpg` / `image7.jpg` component photos from the sellers) |
+| `readmeImgSrc/` | README images (`image5.webp` photo of the build, `image2.jpg` the dog, `image3.jpg` dashboard, `wiring.svg` wiring (side view of the scale + pins), `calibration.svg` the three calibration points, `image1.jpg` / `image6.jpg` / `image7.jpg` component photos from the sellers) |
 | `LICENSE` | MIT, Nicolas Holder |
 
 ## Versions
@@ -63,7 +63,8 @@ the empty bowl, then with 1 L and 2 L, and replace the three lines.
 ## Wiring (documented invariant)
 
 HX711 VCC → 3.3V, GND → GND, DAT → D0, CLK → D1. If a pin changes in the YAML, update the table in
-both READMEs and do not silently modify `readmeImgSrc/image4.png`.
+both READMEs and update `readmeImgSrc/wiring.svg` (wire to the D0 pin and the pin list at the bottom).
+If the calibration points change, update `readmeImgSrc/calibration.svg` or say it shows the original points.
 
 ## Home Assistant side
 

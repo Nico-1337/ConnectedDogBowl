@@ -76,7 +76,7 @@ If you can, also print an **enclosure for the ESP8266**. Otherwise, any [plastic
 | DAT | D0 | data |
 | CLK | D1 | clock |
 
-<p align="center"><img src="./readmeImgSrc/image4.png" width="45%" alt="HX711 to NodeMCU wiring diagram"/></p>
+![The scale seen from the side, and the wiring from the load cell to the HX711 and the NodeMCU](readmeImgSrc/wiring.svg)
 
 ## Installation
 
@@ -108,6 +108,8 @@ Calibration happens in the `calibrate_linear` filter. Each line has the form "ra
 Here, `555000` is the value read by the HX711 and `1` is the value sent to Home Assistant (1 litre).
 For your own points: put the empty bowl on the scale, note the raw value in the ESPHome logs, then repeat with 1 L and 2 L of water.
 Negative values are clamped to 0 by the `lambda` filter, and invalid readings (`nan`) are ignored.
+
+![Calibration: the three points of dogbowl.yaml on a straight line, about 390,000 counts per litre](readmeImgSrc/calibration.svg)
 
 ## Limitations
 
