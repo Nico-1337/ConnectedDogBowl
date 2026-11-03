@@ -1,78 +1,139 @@
-<p align="center"><img src="./readmeImgSrc/image5.webp/" width="42%"/></p>
+<p align="center"><img src="./readmeImgSrc/image5.webp" width="42%" alt="La gamelle posée sur sa balance, la carte NodeMCU à côté"/></p>
 
-# Connected bowl :dog2:
+# Gamelle connectée 🐕
 
-## Presentation :information_source:
+Une balance sous la gamelle d'eau, un ESP8266 sous ESPHome, et Home Assistant sait quand elle se vide.
 
-This project aims to connect a water or food bowl for dogs or cats to a home automation system (<a href="https://www.home-assistant.io/">HomeAssistant</a>). \
-The main interest is to **provide information on the current weight of the bowl** and then to **trigger a visual feedback or sound alerts** in case the level becomes low. 
-- Approximate cost of project :heavy_dollar_sign: : **$8.00** 
-- Approximate set-up time :watch: : **4 hours**
+*English summary at the bottom.*
 
-<p align="center"><img src="./readmeImgSrc/image2.jpg/" width="42%"/></p>
+- Coût approximatif : **8 $** de matériel
+- Temps de montage : **environ 4 heures**
+- Fiche du projet : [nholder.fr/projets.html#gamelle](https://nholder.fr/projets.html#gamelle)
 
-## Prerequisites :arrow_heading_up:
+## Ce que ça fait
 
--   A **wifi** network
--   A compatible **home automation system**, in the example used here : <a href="https://www.home-assistant.io/">HomeAssistant</a>
--   A **bowl**
--   The necessary to make **solder** or some<a href="https://www.aliexpress.com/item/1005003052170258.html?src=google&src=google&albch=shopping&acnt=248-630-5778&isdl=y&slnk=&plac=&mtctp=&albbt=Google_7_shopping&aff_platform=google&aff_short_key=UneMJZVf&&albagn=888888&isSmbAutoCall=false&needSmbHouyi=false&albcp=10191220526&albag=107473525328&trgt=539263010115&crea=fr1005003052170258&netw=u&device=c&albpg=539263010115&albpd=fr1005003052170258&gclid=Cj0KCQjwqp-LBhDQARIsAO0a6aL09VfQg-ypNeFRJKBXkJGkGlaXHUrfbIuMrFW5oHXrIt7QZDsey7gaAkNSEALw_wcB&gclsrc=aw.ds"> **Dupont cables**</a> *(Depending on the sensor purchased, the cables to connect the HX711 module to the NodeMcu are included)*.
--   What you need to **falsh EspHome** on a NodeMcu *(only sofware)*
+J'ai fait cette gamelle pour Roméo, notre chien. Elle se pèse en continu et envoie son poids, converti en litres, à [Home Assistant](https://www.home-assistant.io/) toutes les 10 secondes.
+Quand le niveau baisse, la maison peut prévenir : une lumière, un son, un message.
+Le montage marche aussi pour une gamelle de croquettes ou pour un chat.
 
-## Material :toolbox:
+<p align="center"><img src="./readmeImgSrc/image2.jpg" width="42%" alt="Roméo"/></p>
 
--   1 X <a href="https://www.aliexpress.com/item/33049521755.html?spm=a2g0o.productlist.0.0.61048764yEn3Z8&algo_pvid=b2e6d4c2-1973-4d39-9d1c-41c5f91445de&algo_exp_id=b2e6d4c2-1973-4d39-9d1c-41c5f91445de-2&pdp_ext_f=%7B%22sku_id%22%3A%2210000015406675829%22%7D">USB power supply</a> : $1.5
--   1 X <a href="https://www.aliexpress.com/item/4000160133215.html?spm=a2g0o.productlist.0.0.398b72fa8B8vsV&algo_pvid=99beede7-23b1-4714-9472-b041a2508047&algo_exp_id=99beede7-23b1-4714-9472-b041a2508047-0&pdp_ext_f=%7B%22sku_id%22%3A%2210000000516093098%22%7D">NodeMcu</a> : $3
--   1 X <a href="https://www.aliexpress.com/item/1005001425591567.html?spm=a2g0o.productlist.0.0.4dd11f7b506olR&algo_pvid=e6991931-4cac-4b99-a024-a31e79130479&algo_exp_id=e6991931-4cac-4b99-a024-a31e79130479-40&pdp_ext_f=%7B%22sku_id%22%3A%2212000016062336368%22%7D"> weight sensor with HX711module</a> : $3.5
+## Comment ça marche
+
+```mermaid
+flowchart LR
+  B[Gamelle] --> C[Cellule de charge]
+  C -->|signal analogique| H[HX711]
+  H -->|DAT D0 / CLK D1| E[NodeMCU ESP8266<br/>ESPHome]
+  E -->|wifi, API native| HA[Home Assistant]
+  HA --> A[Alertes : lumière, voix, SMS]
+```
+
+1. La cellule de charge est prise entre deux plateaux. La gamelle est posée dessus.
+2. Le module HX711 lit la cellule (gain 128).
+3. L'ESP8266 tourne sous [ESPHome](https://esphome.io/). Il filtre la mesure, la convertit en litres et l'envoie à Home Assistant.
+4. Home Assistant découvre le capteur tout seul. Les alertes sont des automations classiques.
+
+Dans ma maison, sous 0,25 L, Home Assistant envoyait un SMS, l'annonçait à voix haute et affichait une alerte sur la tablette de l'entrée. Ces automations sont dans ma [configuration Home Assistant publique](https://github.com/Nico-1337/HomeAssistantPublicConfig) (`automation/notification/romeo/`).
+
+<p align="center"><img src="./readmeImgSrc/image3.jpg" width="35%" alt="Tableau de bord Home Assistant avec la jauge Eau Roméo"/></p>
+
+## Matériel
+
+| Qté | Composant | Prix indicatif |
+|---|---|---|
+| 1 | [Alimentation USB](https://www.aliexpress.com/item/33049521755.html) | 1,50 $ |
+| 1 | [NodeMCU (ESP8266)](https://www.aliexpress.com/item/4000160133215.html) | 3 $ |
+| 1 | [Capteur de poids avec module HX711](https://www.aliexpress.com/item/1005001425591567.html) | 3,50 $ |
 
 <p align="center">
-	<img src="./readmeImgSrc/image1.jpg/" width="25%"/>
-	<img src="./readmeImgSrc/image6.jpg/" width="25%"/>
+  <img src="./readmeImgSrc/image1.jpg" width="25%" alt="Carte de développement ESP"/>
+  <img src="./readmeImgSrc/image6.jpg" width="25%" alt="Cellule de charge entre deux plateaux en acrylique, avec module HX711"/>
+  <img src="./readmeImgSrc/image7.jpg" width="25%" alt="Alimentation USB"/>
 </p>
 
-## Hardware installation :hammer_and_wrench:
+Il faut aussi :
 
-I strongly recommend that you choose a weight sensor **with the 2 acrylic trays** as shown in the previous listing. \
-The load cell is located between two trays that are screwed to two opposite sides of the cell. The profile of the assembly is reminiscent of the letter "S". This is perfect for this project \
-Otherwise it is possible to take the sensor alone with the HX711 module and to **print in 3D yourself your support** which will be used to put the bowl on. \
-I also recommend if possible to **print a protective case for the Esp8266** if you have a 3D printer. Otherwise any <a href="https://www.aliexpress.com/item/32980118610.html?spm=a2g0o.productlist.0.0.313574a51Mtorh&algo_pvid=e005df0d-1ffe-4dee-b5ca-a1445f0056b3&algo_exp_id=e005df0d-1ffe-4dee-b5ca-a1445f0056b3-2&pdp_ext_f=%7B%22sku_id%22%3A%2266816628372%22%7D">plastic box</a> will do. \
-Concerning the connection of the sensor to the Esp : \
-Simply connect the following pins from the HX711 to your Esp8266:
+- un réseau **wifi** ;
+- un système domotique compatible, ici **Home Assistant** ;
+- une **gamelle** ;
+- de quoi **souder**, ou des [câbles Dupont](https://www.aliexpress.com/item/1005003052170258.html) (selon le capteur acheté, les câbles entre le HX711 et le NodeMCU sont fournis) ;
+- de quoi **flasher ESPHome** sur un NodeMCU (logiciel seulement).
 
--   HX711 -> Esp8266
--   VCC -> 3.3V
--   GND -> GND
--   DAT -> D0 (digital data)
--   CLK -> D1 (clock signal)
+## Montage
 
-<img src="./readmeImgSrc/image4.png/" width="35%"/>
+Je conseille un capteur de poids **livré avec ses deux plateaux en acrylique**, comme celui de la liste.
+La cellule est vissée entre les deux plateaux, chacun sur une face opposée. Vu de profil, l'ensemble forme un « S ». C'est parfait pour ce projet.
+Sinon, on peut acheter la cellule seule avec le HX711 et **imprimer en 3D** son propre support.
+Si possible, imprimez aussi un **boîtier pour l'ESP8266**. Sinon, n'importe quelle [boîte en plastique](https://www.aliexpress.com/item/32980118610.html) fait l'affaire.
 
-## Software :computer:
+### Câblage HX711 → NodeMCU
 
-The easiest way is to use <a href="https://esphome.io/">**EspHome**</a>, it's a system working under Esp8266 and Esp32 allowing you to **quickly deploy different sensors** without needing to know how to code. It includes various very useful functions like remote deployment of updates. \
-**If you have never used EspHome I strongly advise you to watch different videos like: <a href="https://www.youtube.com/watch?v=iufph4dF3YU&ab_channel=EverythingSmartHome">Getting started with ESPHome</a>**
+| HX711 | NodeMCU (ESP8266) | Rôle |
+|---|---|---|
+| VCC | 3.3V | alimentation |
+| GND | GND | masse |
+| DAT | D0 | données |
+| CLK | D1 | horloge |
 
-Simply:
+<p align="center"><img src="./readmeImgSrc/image4.png" width="45%" alt="Schéma de câblage HX711 vers NodeMCU"/></p>
 
--   In ESPHome
+## Installation
 
-    -   Add a new node
-    -   Use <a href="https://github.com/Nico-1337/ConnectedDogBowl/blob/main/dogbowl.yaml">the configuration file of this GitHub</a>
-        -   In the configuration you will have to change :
-            -   The configuration of your wifi
-            -   If you use homeAssistant :
-                -   The password for your Home assistant API
-            -   The OTA password
-            -   (Optional)
-                -   unit_of_measurement
-                -   name
-                -   update_interval
-    -   You will then have to flash your Esp8266 via EspHome with this configuration
-    -   Then you just have to integrate this new node in your home automation system, this is very easy on HomeAssistant, the auto-discover should manage to find this new node automatically.
-    -   You will then need to calibrate your sensor, simply change the values in the 'calibrate_linear' option.
-        -   These options are in the form: "gross value -> return value".
-            -   In the following example: "555000 -> 1
-                -   555000' is the value read by the HX711 module
-                -   1' will be the value returned to your home automation system.
+Le plus simple est [ESPHome](https://esphome.io/). Il tourne sur ESP8266 et ESP32 et permet de déployer des capteurs sans écrire de code, avec mise à jour à distance (OTA).
+Si vous n'avez jamais utilisé ESPHome, regardez d'abord un tutoriel comme [Getting started with ESPHome](https://www.youtube.com/watch?v=iufph4dF3YU).
 
-<p align="center"><img src="./readmeImgSrc/image3.jpg/" width="35%"/></p>
+1. Dans ESPHome, ajoutez un nouveau nœud.
+2. Prenez le fichier [`dogbowl.yaml`](dogbowl.yaml) de ce dépôt et remplacez :
+   - le nom et le mot de passe de votre wifi (`ssid`, `password`) ;
+   - le mot de passe du point d'accès de secours (`ap.password`) ;
+   - le mot de passe de l'API Home Assistant (`api.password`) ;
+   - le mot de passe OTA (`ota.password`) ;
+   - au besoin : `unit_of_measurement`, `name`, `update_interval`.
+3. Flashez l'ESP8266 avec cette configuration depuis ESPHome.
+4. Dans Home Assistant, le nouveau nœud est découvert automatiquement : il suffit de l'ajouter.
+5. Étalonnez la balance (ci-dessous).
+
+### Étalonnage
+
+L'étalonnage se fait dans le filtre `calibrate_linear`. Chaque ligne a la forme « valeur brute -> valeur renvoyée ».
+
+```yaml
+- calibrate_linear:
+  - 164800 -> 0
+  - 555000 -> 1
+  - 943700 -> 2
+```
+
+Ici, `555000` est la valeur lue par le HX711 et `1` la valeur envoyée à Home Assistant (1 litre).
+Pour vos propres points : posez la gamelle vide, relevez la valeur brute dans les journaux ESPHome, puis recommencez avec 1 L et 2 L d'eau.
+Les valeurs négatives sont ramenées à 0 par le filtre `lambda`, et les lectures invalides (`nan`) sont ignorées.
+
+## Limites
+
+- La configuration date de 2020-2021. Les versions récentes d'ESPHome ont changé la syntaxe (bloc `esp8266:` à la place de `platform:` sous `esphome:`, clé de chiffrement à la place du mot de passe d'API, `platform: esphome` sous `ota:`). Adaptez le fichier si ESPHome le refuse.
+- Les valeurs d'étalonnage sont celles de ma cellule et de ma gamelle. Elles ne valent pas pour une autre.
+- La mesure est un poids converti en litres : une gamelle de croquettes demande son propre étalonnage.
+
+## Crédits et licence
+
+Projet de Nicolas Holder, sous licence [MIT](LICENSE).
+Les photos de composants viennent des fiches des vendeurs.
+
+## Pour les IA et le vibe coding
+
+[AGENTS.md](AGENTS.md) donne le contexte pour une IA : rôle du fichier `dogbowl.yaml`, champs à remplacer, étalonnage et ce qu'il ne faut jamais commiter.
+Si vous utilisez un assistant de code sur ce dépôt, demandez-lui de lire AGENTS.md avant toute modification.
+
+---
+
+## English summary
+
+A water bowl that weighs itself. A load cell sits between two acrylic plates under the bowl, an HX711 reads it, and a NodeMCU (ESP8266) running ESPHome sends the level in litres to Home Assistant every 10 seconds. Home Assistant then triggers alerts (light, voice, SMS) when the bowl runs low.
+
+- **Hardware (about $8):** USB power supply, NodeMCU, load cell with HX711 module, Dupont wires.
+- **Wiring:** HX711 VCC → 3.3V, GND → GND, DAT → D0, CLK → D1.
+- **Setup:** add a node in ESPHome, use [`dogbowl.yaml`](dogbowl.yaml), replace the Wi-Fi, fallback hotspot, API and OTA passwords, flash, and let Home Assistant discover it.
+- **Calibration:** edit `calibrate_linear` (`raw value -> returned value`); record the raw value with the empty bowl, then with 1 L and 2 L of water.
+- **Note:** written for 2020-2021 ESPHome; recent versions need an updated syntax.
+- License: MIT. Project page (French): [nholder.fr/projets.html#gamelle](https://nholder.fr/projets.html#gamelle).
